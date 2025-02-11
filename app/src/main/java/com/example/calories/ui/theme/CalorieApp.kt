@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.toSize
 
 @Composable
@@ -30,7 +31,7 @@ fun CalorieApp(modifier: Modifier = Modifier) {
     var result by remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Heading("Calories Tracker")
@@ -38,9 +39,25 @@ fun CalorieApp(modifier: Modifier = Modifier) {
         GenderChoices(male = male, setGenderMale = { male = it })
         IntensityList(onClick = { intensity = it })
 
-        Spacer(modifier = Modifier.height(8.dp))
+        //Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = {
+        // ✅ Use the Calculation function as the button
+        Calculation(
+            male = male,
+            weight = weight,
+            intensity = intensity,
+            setResult = { result = it } // Updates the result
+        )
+
+        Text(
+            text = "Calories Burned: $result",
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.secondary,
+            fontWeight = FontWeight.Bold
+
+        )
+
+        /*Button(onClick = {
             result = if (male) {
                 ((879 + 10.2 * weight) * intensity).toInt()
             } else {
@@ -48,14 +65,24 @@ fun CalorieApp(modifier: Modifier = Modifier) {
             }
         }) {
             Text("Calculate Calories")
-        }
+        }*/
 
-        Text(
-            text = "Calories Burned: $result",
-            fontSize = 20.sp,
-            color = Color.Blue,
-            modifier = Modifier.padding(top = 16.dp)
-        )
+
+    }
+}
+@Composable
+fun Calculation(male: Boolean, weight: Int, intensity: Float, setResult: (Int) -> Unit) {
+    Button(
+        onClick = {
+            if (male) {
+                setResult(((879 + 10.2 * weight) * intensity).toInt())
+            } else {
+                setResult(((795 + 7.18 * weight) * intensity).toInt())
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(text = "CALCULATE")
     }
 }
 
